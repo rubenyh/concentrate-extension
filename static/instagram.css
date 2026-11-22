@@ -1,0 +1,15 @@
+/*
+ * Instagram Reels surfaces. Every selector here must have positive and negative fixtures in
+ * tests/fixtures/instagram/ (see tests/unit/selectors.test.ts). Instagram class names are
+ * obfuscated and rotate, so only href-based selectors are used, and only the link itself is
+ * hidden (never an ancestor), which keeps false positives contained.
+ */
+
+/* Reels navigation link (/reels/) and profile Reels tab (/{user}/reels/).
+   Hashtag links such as /explore/tags/reels/ are excluded. */
+a[href$="/reels/"]:not([href^="/explore/"]),
+
+/* Reel tiles in profile grids, Explore, search, and reel links in feed posts. */
+a[href*="/reel/"] {
+  display: none !important;
+}

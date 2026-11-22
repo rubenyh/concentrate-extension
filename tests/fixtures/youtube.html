@@ -1,0 +1,119 @@
+<!doctype html>
+<!--
+  Hand-trimmed model of YouTube desktop markup (structure observed 2026; not a verbatim snapshot).
+  data-expect="hidden": a Shorts surface that static/youtube.css must hide.
+  data-expect="visible": regular content that must stay visible.
+  Also served by Playwright as https://www.youtube.com/ (tests/e2e).
+-->
+<html lang="en">
+  <head>
+    <title>YouTube fixture</title>
+  </head>
+  <body>
+    <ytd-guide-renderer>
+      <ytd-guide-entry-renderer data-expect="visible" id="guide-home">
+        <a id="endpoint" title="Home" href="/">Home</a>
+      </ytd-guide-entry-renderer>
+      <ytd-guide-entry-renderer data-expect="hidden" id="guide-shorts">
+        <a id="endpoint" title="Shorts">Shorts</a>
+      </ytd-guide-entry-renderer>
+      <ytd-guide-entry-renderer data-expect="visible" id="guide-subs">
+        <a id="endpoint" title="Subscriptions" href="/feed/subscriptions">Subscriptions</a>
+      </ytd-guide-entry-renderer>
+    </ytd-guide-renderer>
+
+    <ytd-mini-guide-renderer>
+      <ytd-mini-guide-entry-renderer data-expect="hidden" aria-label="Shorts">
+        <a id="endpoint" title="Shorts">Shorts</a>
+      </ytd-mini-guide-entry-renderer>
+      <ytd-mini-guide-entry-renderer data-expect="visible" aria-label="Home">
+        <a id="endpoint" title="Home" href="/">Home</a>
+      </ytd-mini-guide-entry-renderer>
+    </ytd-mini-guide-renderer>
+
+    <ytd-rich-grid-renderer id="home-grid">
+      <ytd-rich-item-renderer data-expect="visible" id="regular-video">
+        <a id="regular-link" href="/watch?v=dQw4w9WgXcQ">Regular video</a>
+      </ytd-rich-item-renderer>
+      <ytd-rich-section-renderer data-expect="hidden">
+        <div id="content">
+          <ytd-rich-shelf-renderer is-shorts data-expect="hidden">
+            <ytd-rich-item-renderer data-expect="hidden">
+              <ytm-shorts-lockup-view-model-v2>
+                <a id="shorts-link" href="/shorts/abc123">Short in shelf</a>
+              </ytm-shorts-lockup-view-model-v2>
+            </ytd-rich-item-renderer>
+          </ytd-rich-shelf-renderer>
+        </div>
+      </ytd-rich-section-renderer>
+      <ytd-rich-section-renderer data-expect="visible" id="news-section">
+        <div id="content">
+          <ytd-rich-shelf-renderer data-expect="visible">
+            <a href="/watch?v=news">Breaking news shelf</a>
+          </ytd-rich-shelf-renderer>
+        </div>
+      </ytd-rich-section-renderer>
+      <ytd-rich-item-renderer data-expect="hidden">
+        <ytm-shorts-lockup-view-model>
+          <a href="/shorts/legacyLockup">Short with legacy lockup</a>
+        </ytm-shorts-lockup-view-model>
+      </ytd-rich-item-renderer>
+      <ytd-rich-item-renderer data-expect="hidden">
+        <a href="/shorts/plainHref">Short identified only by href</a>
+      </ytd-rich-item-renderer>
+      <ytd-rich-item-renderer data-expect="visible">
+        <a href="/playlist?list=PL123">Playlist</a>
+      </ytd-rich-item-renderer>
+    </ytd-rich-grid-renderer>
+
+    <ytd-section-list-renderer id="search-results">
+      <ytd-video-renderer data-expect="visible">
+        <a href="/watch?v=search1">Search result video</a>
+        <ytd-thumbnail-overlay-time-status-renderer overlay-style="DEFAULT"
+          >10:01</ytd-thumbnail-overlay-time-status-renderer
+        >
+      </ytd-video-renderer>
+      <ytd-video-renderer data-expect="hidden">
+        <a href="/shorts/searchShort">Search result short</a>
+      </ytd-video-renderer>
+      <ytd-video-renderer data-expect="hidden">
+        <a href="/watch?v=disguised">Short linked as watch URL</a>
+        <ytd-thumbnail-overlay-time-status-renderer
+          overlay-style="SHORTS"
+        ></ytd-thumbnail-overlay-time-status-renderer>
+      </ytd-video-renderer>
+      <ytd-reel-shelf-renderer data-expect="hidden">
+        <a href="/shorts/reelShelf">Shorts shelf in search</a>
+      </ytd-reel-shelf-renderer>
+      <grid-shelf-view-model data-expect="hidden">
+        <ytm-shorts-lockup-view-model-v2>
+          <a href="/shorts/gridShelf">Grid shelf short</a>
+        </ytm-shorts-lockup-view-model-v2>
+      </grid-shelf-view-model>
+      <grid-shelf-view-model data-expect="visible">
+        <a href="/watch?v=gridVideo">Grid shelf of regular videos</a>
+      </grid-shelf-view-model>
+    </ytd-section-list-renderer>
+
+    <ytd-watch-next-secondary-results-renderer>
+      <ytd-compact-video-renderer data-expect="visible">
+        <a href="/watch?v=related">Related video</a>
+      </ytd-compact-video-renderer>
+      <ytd-compact-video-renderer data-expect="hidden">
+        <a href="/shorts/relatedShort">Related short</a>
+      </ytd-compact-video-renderer>
+    </ytd-watch-next-secondary-results-renderer>
+
+    <yt-tab-group-shape>
+      <yt-tab-shape data-expect="visible" tab-title="Videos">Videos</yt-tab-shape>
+      <yt-tab-shape data-expect="hidden" tab-title="Shorts">Shorts</yt-tab-shape>
+      <yt-tab-shape data-expect="visible" tab-title="Playlists">Playlists</yt-tab-shape>
+    </yt-tab-group-shape>
+
+    <ytm-reel-shelf-renderer data-expect="hidden">
+      <a href="/shorts/mobile">Mobile shelf</a>
+    </ytm-reel-shelf-renderer>
+
+    <a id="history-link" data-expect="visible" href="/feed/history">History (Shorts stay listed)</a>
+  </body>
+</html>

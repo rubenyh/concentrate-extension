@@ -1,0 +1,41 @@
+<!doctype html>
+<!--
+  Hand-trimmed model of Instagram web markup (structure observed 2026; not a verbatim snapshot).
+  Instagram class names are obfuscated, so only element roles and hrefs are modeled.
+  data-expect="hidden": a Reels surface that static/instagram.css must hide.
+  data-expect="visible": regular content that must stay visible.
+  Also served by Playwright as https://www.instagram.com/ (tests/e2e).
+-->
+<html lang="en">
+  <head>
+    <title>Instagram fixture</title>
+  </head>
+  <body>
+    <nav>
+      <a data-expect="visible" href="/">Home</a>
+      <a data-expect="visible" href="/explore/">Explore</a>
+      <a data-expect="hidden" id="nav-reels" href="/reels/">Reels</a>
+      <a data-expect="visible" href="/direct/inbox/">Messages</a>
+    </nav>
+
+    <main>
+      <div role="tablist">
+        <a data-expect="visible" href="/someuser/">Posts</a>
+        <a data-expect="hidden" href="/someuser/reels/">Reels</a>
+        <a data-expect="visible" href="/someuser/tagged/">Tagged</a>
+      </div>
+
+      <div class="grid">
+        <a data-expect="visible" id="post-link" href="/p/C0postId/">Regular post</a>
+        <a data-expect="hidden" id="reel-link" href="/reel/C0reelId/">Reel tile</a>
+        <a data-expect="hidden" href="/someuser/reel/C0reelId2/">Profile-scoped reel tile</a>
+      </div>
+
+      <article data-expect="visible">
+        <a data-expect="visible" href="/someuser/">someuser</a>
+        <a data-expect="visible" href="/explore/tags/reels/">#reels</a>
+        <a data-expect="visible" href="/stories/someuser/">Story</a>
+      </article>
+    </main>
+  </body>
+</html>

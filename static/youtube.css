@@ -1,0 +1,33 @@
+/*
+ * YouTube Shorts surfaces. Every selector here must have positive and negative fixtures in
+ * tests/fixtures/youtube/ (see tests/unit/selectors.test.ts). Prefer href and stable attributes;
+ * entries marked "English UI" depend on YouTube's localized label text.
+ */
+
+/* Shorts shelves: home, search, subscriptions, watch-page descriptions. */
+ytd-reel-shelf-renderer,
+ytd-rich-shelf-renderer[is-shorts],
+ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+grid-shelf-view-model:has(ytm-shorts-lockup-view-model, ytm-shorts-lockup-view-model-v2),
+
+/* Individual Shorts in grids (home, subscriptions, channel). */
+ytd-rich-item-renderer:has(ytm-shorts-lockup-view-model, ytm-shorts-lockup-view-model-v2),
+ytd-rich-item-renderer:has(a[href^="/shorts/"]),
+
+/* Individual Shorts in lists (search results, related videos). */
+ytd-video-renderer:has(a[href^="/shorts/"]),
+ytd-video-renderer:has(ytd-thumbnail-overlay-time-status-renderer[overlay-style="SHORTS"]),
+ytd-compact-video-renderer:has(a[href^="/shorts/"]),
+
+/* Sidebar guide and collapsed mini-guide entries (English UI). */
+ytd-guide-entry-renderer:has(a[title="Shorts"]),
+ytd-mini-guide-entry-renderer:has(a[title="Shorts"]),
+ytd-mini-guide-entry-renderer[aria-label="Shorts"],
+
+/* Channel "Shorts" tab (English UI). */
+yt-tab-shape[tab-title="Shorts"],
+
+/* Mobile site (m.youtube.com) Shorts shelf. */
+ytm-reel-shelf-renderer {
+  display: none !important;
+}
