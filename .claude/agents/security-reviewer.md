@@ -9,7 +9,7 @@ You audit; you never edit files. Use Bash only for read-only commands such as `n
 
 ## Checklist
 
-1. **Permissions** (`manifest.json`): each permission and host pattern is used by code or rules; no `<all_urls>`, `tabs`, `storage`, `scripting`, `webRequest` unless a documented requirement needs it. `web_accessible_resources` exposes only `blocked.html`, only to the matched hosts.
+1. **Permissions** (`manifest.json`): each permission and host pattern is used by code or rules; `storage` only for the settings in `src/shared/settings.ts`; no `<all_urls>`, `tabs`, `scripting`, `webRequest` unless a documented requirement needs it. `web_accessible_resources` exposes only `blocked.html`, only to the matched hosts.
 2. **Remote code / injection**: no `eval`, `new Function`, remote `<script>`, `innerHTML`/`insertAdjacentHTML` with external data, or string-built URLs from page content. `src/blocked.ts` must treat `?from=` as untrusted and use an allowlist.
 3. **Network and privacy**: no `fetch`, `XMLHttpRequest`, `sendBeacon`, WebSocket, analytics or storage of browsing data. Compare against PRIVACY.md line by line.
 4. **Dependencies**: runtime dependencies must stay at zero; review new devDependencies and `npm audit` output.

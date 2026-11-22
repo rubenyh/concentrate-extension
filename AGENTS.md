@@ -7,7 +7,7 @@ Guidance for any coding agent or tool working in this repository. Claude Code al
 - **Boundaries**:
   - Route decisions live only in `src/shared/classify.ts`, mirrored by `static/rules.json`.
   - Selectors live only in `static/<site>.css`.
-  - No network, storage, telemetry or remote code.
+  - No network, telemetry or remote code. Storage holds only the settings in `src/shared/settings.ts`.
   - No new permissions without a [DECISIONS.md](DECISIONS.md) entry.
 - **Before committing**: `npm run check` must pass. If you touched the guard, rules, CSS or manifest, also run `npm run test:e2e`.
 - **Tests**:

@@ -26,6 +26,7 @@ Desktop Chrome users who want to keep YouTube and Instagram but cut out short-fo
   - On a channel, the Shorts tab is gone.
   - The user watches regular videos normally.
 - **Instagram**:
+  - The home feed shows only posts from accounts the user follows, without reels or ads. Each filter can be switched off in the toolbar popup.
   - The Reels nav item and the profile Reels tab are gone, and reel tiles are hidden in grids.
   - Posts, stories and DMs work.
   - Opening a reel link shows the block page.
@@ -40,13 +41,15 @@ Desktop Chrome users who want to keep YouTube and Instagram but cut out short-fo
 | F4  | The block page is accessible, explains what happened, and offers Back and site-home actions without loops.                                                                          |
 | F5  | Hide YouTube Shorts shelves, grid items, search and related results, the sidebar entries and the channel tab.                                                                       |
 | F6  | Hide the Instagram Reels nav link, the profile Reels tab and reel tiles.                                                                                                            |
+| F8  | Instagram home feed, toggle "Hide reels" (default on): hide reel posts.                                                                                                             |
+| F9  | Instagram home feed, toggle "Only show accounts I follow" (default on): hide suggested posts from unfollowed accounts, and ads.                                                     |
 | F7  | Content rendered later (infinite scroll, SPA page changes) is filtered automatically.                                                                                               |
 
 ## Nonfunctional requirements
 
-- **Privacy**: no data collection, network requests, storage or accounts.
+- **Privacy**: no data collection, network requests or accounts. The only stored data is the two toggle values.
 - **Least privilege**: only `declarativeNetRequestWithHostAccess` and four host patterns.
-- **Performance**: no polling, no observers, and per page only one click listener and one navigation listener.
+- **Performance**: no polling. Per page there is one click listener and one navigation listener. On Instagram, one MutationObserver runs only while "Only show accounts I follow" is on.
 - **Maintainability**: selectors and routes are centralized, and each is pinned by tests.
 - **Compatibility**: Chrome 120 or later (Navigation API, CSS `:has()`).
 
@@ -57,8 +60,7 @@ F1–F7, with automated unit and E2E tests and a manual live checklist.
 ## Out of scope
 
 - Mobile apps, and browsers other than Chrome (Edge likely works, but this is unverified).
-- An on/off toggle, schedules, per-site settings or a popup.
-- Instagram home-feed reels that are linked as `/p/{id}` posts. They cannot be distinguished reliably (see ARCHITECTURE.md, Limitations).
+- Toggles for route blocking or YouTube surfaces, schedules, snooze.
 - Shorts embedded on third-party sites.
 
 ## Acceptance criteria
@@ -74,7 +76,7 @@ The MVP is done when all of the following are true and evidenced in [TASKS.md](T
 
 ## Future enhancements
 
-- Toggle or snooze via a popup (needs the `storage` permission).
+- Snooze, and toggles for YouTube surfaces.
 - Localized label matching for the YouTube guide and tab entries.
 - Edge and Firefox packaging.
 - Optional blocking of the YouTube home feed or Instagram Explore.

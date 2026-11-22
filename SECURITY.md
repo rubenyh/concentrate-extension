@@ -2,7 +2,7 @@
 
 ## Principles
 
-- **Least privilege**: one permission and four host patterns. No `<all_urls>`.
+- **Least privilege**: two permissions (`declarativeNetRequestWithHostAccess`, `storage`) and four host patterns. No `<all_urls>`.
 - **No remote code**:
   - Everything that runs ships in the package.
   - Nothing is fetched, evaluated or injected as HTML.
@@ -12,11 +12,12 @@
 
 ## Permissions
 
-| Permission                                                                      | Why                                                             |
-| ------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `declarativeNetRequestWithHostAccess`                                           | Static rules redirect Shorts/Reels page loads to the block page |
-| `https://www.youtube.com/*`, `https://m.youtube.com/*`, `https://youtube.com/*` | DNR redirects and content scripts on YouTube                    |
-| `https://www.instagram.com/*`                                                   | DNR redirects and content scripts on Instagram                  |
+| Permission                                                                      | Why                                                                     |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `storage`                                                                       | Saves the two popup toggles in `chrome.storage.sync`. No browsing data. |
+| `declarativeNetRequestWithHostAccess`                                           | Static rules redirect Shorts/Reels page loads to the block page         |
+| `https://www.youtube.com/*`, `https://m.youtube.com/*`, `https://youtube.com/*` | DNR redirects and content scripts on YouTube                            |
+| `https://www.instagram.com/*`                                                   | DNR redirects and content scripts on Instagram                          |
 
 `blocked.html` is web-accessible to those hosts only, because Chrome requires this for DNR redirect targets.
 

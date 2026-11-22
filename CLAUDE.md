@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Chrome Manifest V3 extension that blocks Instagram Reels and YouTube Shorts and leaves the rest of both sites working. It has no backend, no runtime dependencies, no storage and no telemetry.
+Chrome Manifest V3 extension that blocks Instagram Reels and YouTube Shorts and leaves the rest of both sites working. It has no backend, no runtime dependencies and no telemetry. It stores only two popup toggles in `chrome.storage.sync`.
 
 ## Architecture in one paragraph
 
@@ -18,7 +18,8 @@ Details: [ARCHITECTURE.md](ARCHITECTURE.md). Decisions: [DECISIONS.md](DECISIONS
 
 - `src/shared/`: classifier and guard (pure TS).
 - `src/content/`: per-site entry points.
-- `src/blocked.ts`: block page.
+- `src/blocked.ts`: block page. `src/popup.ts` + `static/popup.html`: toggles. `src/shared/settings.ts`: settings defaults and storage.
+- `src/content/suggested.ts`: tags suggested Instagram feed posts (the only MutationObserver).
 - `static/`: CSS, DNR rules, HTML and icons, copied verbatim to `dist/`.
 - `manifest.json`: copied to `dist/`.
 - `tests/unit/` (Vitest + jsdom), `tests/e2e/` (Playwright, built extension), `tests/fixtures/` (markup models).

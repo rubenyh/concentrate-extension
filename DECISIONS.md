@@ -60,9 +60,31 @@ Lightweight ADR log. Each entry gives the status, the context, the decision and 
 - **Context**: Instagram class names are obfuscated and rotate.
 - **Decision**: `a[href*="/reel/"]` and `a[href$="/reels/"]`, excluding `/explore/` hashtag links, hide only the anchor itself.
 - **Trade-off**: an empty slot can remain in a grid, but no unrelated post can disappear.
+- **Amended by ADR-010/011**: whole feed `article`s are hidden, but only on the home route and only behind user toggles.
 
 ## ADR-009 — HTTPS-only host patterns and `frame-ancestors 'none'`
 
 - **Status**: accepted (2026-11-21), from the pre-release security review.
 - **Decision**: Host permissions, content-script matches and web-accessible matches use `https://` only. Both sites upgrade `http://` with a server redirect, and the redirected HTTPS load then hits the DNR rules. The extension-pages CSP adds `frame-ancestors 'none'`, so the sites cannot frame `blocked.html` and drive its "Go back" button.
 - **Trade-off**: none observed. The E2E suite passes unchanged.
+
+## ADR-010 — Popup toggles in `chrome.storage.sync`, applied as `<html>` attributes
+
+- **Status**: accepted (2026-11-21). The user asked for toggleable Instagram home-feed filters.
+- **Decision**:
+  - Add the `storage` permission (no install warning) and a toolbar popup with two checkboxes.
+  - Content scripts mirror the settings and the home route as `data-rsb-*` attributes on `<html>`. CSS rules are scoped by those attributes.
+  - Live check: Instagram keeps `<html>` attributes across in-app navigation.
+- **Alternatives rejected**:
+  - Messaging through a service worker: more moving parts for two booleans.
+  - Injecting and removing stylesheets per toggle: more code than attribute scoping.
+- **Trade-off**: `storage.sync` syncs the two values through the user's Chrome sync. They contain no browsing data (PRIVACY.md).
+
+## ADR-011 — MutationObserver for suggested Instagram posts (exception to ADR-003)
+
+- **Status**: accepted (2026-11-21).
+- **Context**: The live inspection on 2026-11-21 (logged in, English UI, 30 posts) found one reliable signal for posts from unfollowed accounts: an in-post `[role=button]` with the text "Follow". It was on 14 of 14 suggested posts and on 0 of 16 followed posts. Feed `<article>`s have no other structural marker. CSS cannot match text.
+- **Decision**: `src/content/suggested.ts` observes the document (childList, subtree, characterData). It coalesces mutations into one rescan per animation frame. The feed is virtualized, so there are only 5–9 articles to scan. It toggles `data-rsb-suggested`, which CSS hides. The observer runs only while the toggle is on. It ignores attribute mutations, so its own writes cannot loop. It uses `textContent`, because Instagram keeps rotated-out labels hidden in the DOM.
+- **Trade-off**:
+  - Language-dependent: the English "Follow" label only.
+  - Ads need no JS: they lack `<time>` (17 of 17 ads, 0 of 30 posts).

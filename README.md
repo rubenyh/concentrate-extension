@@ -2,7 +2,7 @@
 
 A Chrome extension (Manifest V3) that blocks **Instagram Reels** and **YouTube Shorts**. Regular videos, posts, stories, messages, playlists and subscriptions keep working.
 
-It runs entirely in your browser. It has no accounts, no servers, no analytics, and no stored data.
+It runs entirely in your browser. It has no accounts, no servers and no analytics. It stores only its two on/off settings.
 
 ## Features
 
@@ -11,7 +11,10 @@ It runs entirely in your browser. It has no accounts, no servers, no analytics, 
   - YouTube: `/shorts/…` and channel Shorts tabs, on `www.`, `m.` and `youtube.com`.
   - Instagram: `/reel/…`, `/reels/…`, `/<user>/reels/`.
 - YouTube: hides Shorts shelves, Shorts in the home grid, search and related results, the sidebar Shorts entry, and the channel Shorts tab.
-- Instagram: hides the Reels nav link, the profile Reels tab, and reel tiles.
+- Instagram: hides the Reels nav link, the profile Reels tab, and reel tiles in profile and Explore grids.
+- Instagram home feed, each part switchable in the toolbar popup:
+  - **Hide reels**: removes reel posts.
+  - **Only show accounts I follow**: removes suggested posts from accounts you don't follow, and ads.
 - New content (infinite scroll, in-app navigation) is filtered automatically, with no reload.
 
 ## Requirements
@@ -49,7 +52,8 @@ Project docs:
 
 - YouTube and Instagram change their page markup often. Hidden entry points can reappear until the selectors are updated. Route blocking does not depend on markup.
 - The YouTube sidebar "Shorts" entry and the channel "Shorts" tab are matched by their English labels. In other UI languages they stay visible, but opening them is still blocked.
-- Instagram home-feed reels that are linked as normal posts (`/p/…`) can stay visible.
+- "Only show accounts I follow" recognizes suggested posts by Instagram's English "Follow" button. In other languages, only ads are removed.
+- A reel opened through a normal post link (`/p/…`, for example from Explore or a shared link) is not blocked.
 - YouTube and Instagram can detect that this extension is installed, because the block page must be web-accessible to them.
 
 ## Troubleshooting
