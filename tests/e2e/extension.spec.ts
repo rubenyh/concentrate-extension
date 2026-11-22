@@ -136,6 +136,16 @@ test.describe('Instagram', () => {
     await expectSurfacesFiltered(page);
   });
 
+  test('suggested-post tagging runs only on the home route', async ({ page }) => {
+    await page.goto('https://www.instagram.com/');
+    const suggested = page.locator('article[data-feed="suggested-photo"]');
+    await expect(suggested).toHaveAttribute('data-rsb-suggested', '');
+    await page.evaluate(() => history.pushState({}, '', '/someuser/'));
+    await expect(suggested).not.toHaveAttribute('data-rsb-suggested', '');
+    await page.evaluate(() => history.pushState({}, '', '/'));
+    await expect(suggested).toHaveAttribute('data-rsb-suggested', '');
+  });
+
   test('suggested posts rendered after load are hidden', async ({ page }) => {
     await page.goto('https://www.instagram.com/');
     await page.evaluate(() => {

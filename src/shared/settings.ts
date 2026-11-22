@@ -18,6 +18,7 @@ export async function loadSettings(): Promise<Settings> {
 
 export function onSettingsChanged(callback: (settings: Settings) => void): void {
   chrome.storage.onChanged.addListener((_changes, area) => {
-    if (area === 'sync') void loadSettings().then(callback);
+    // A failed read keeps the current settings; there is nothing better to fall back to.
+    if (area === 'sync') loadSettings().then(callback, () => undefined);
   });
 }

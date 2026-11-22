@@ -12,25 +12,31 @@ startGuard(isBlockedInstagram);
 
 // Home-feed filters live in static/instagram.css, gated by attributes on <html>:
 // data-rsb-home marks the home route; the others mirror the user's toggles. Only the
-// "followed only" toggle needs JS, to tag suggested posts (see ./suggested.ts).
+// "followed only" toggle needs JS, to tag suggested posts (see ./suggested.ts), and that
+// tagger runs only on the home route.
 const root = document.documentElement;
+let settings = DEFAULT_SETTINGS;
 let stopSuggestedTagger: (() => void) | undefined;
 
-const markRoute = (): void => {
-  root.toggleAttribute('data-rsb-home', location.pathname === '/');
-};
-markRoute();
-navigation.addEventListener('currententrychange', markRoute);
-
-const applySettings = (settings: Settings): void => {
+const update = (): void => {
+  const home = location.pathname === '/';
+  root.toggleAttribute('data-rsb-home', home);
   root.toggleAttribute('data-rsb-hide-feed-reels', settings.igHideFeedReels);
   root.toggleAttribute('data-rsb-followed-only', settings.igFollowedOnly);
-  if (settings.igFollowedOnly) stopSuggestedTagger ??= startSuggestedTagger();
-  else {
+  if (home && settings.igFollowedOnly) {
+    stopSuggestedTagger ??= startSuggestedTagger();
+  } else {
     stopSuggestedTagger?.();
     stopSuggestedTagger = undefined;
   }
 };
-applySettings(DEFAULT_SETTINGS); // no flash of unfiltered feed while storage loads
+
+const applySettings = (next: Settings): void => {
+  settings = next;
+  update();
+};
+
+update(); // defaults first: no flash of an unfiltered feed while storage loads
+navigation.addEventListener('currententrychange', update);
 loadSettings().then(applySettings, () => undefined); // keep defaults if storage is unavailable
 onSettingsChanged(applySettings);
