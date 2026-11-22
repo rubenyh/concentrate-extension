@@ -46,14 +46,14 @@ Status: `done` (acceptance verified, with evidence), `open`, `blocked`. Priority
 
 ## M7 — Release readiness
 
-| Task                                                       | P   | Status   | Depends      | Acceptance / evidence                                                                  |
-| ---------------------------------------------------------- | --- | -------- | ------------ | -------------------------------------------------------------------------------------- |
-| Icons 16/48/128                                            | P0  | done     |              | `static/icons/`, referenced in the manifest                                            |
-| Security review                                            | P0  | **open** |              | `security-reviewer` reports no release blockers                                        |
-| Live Instagram verification                                | P0  | **open** | user account | Run the TESTING.md Instagram checklist logged in and record the results                |
-| Live logged-in YouTube home feed check                     | P1  | **open** | user account | Logged-out home showed no feed, so the home shelves are verified only against fixtures |
-| Load in branded Chrome via "Load unpacked"                 | P0  | **open** | user         | Automated checks use bundled Chromium. The user confirms in Chrome 157.                |
-| Chrome Web Store listing (screenshots, justification text) | P2  | open     |              | Not required for the MVP                                                               |
+| Task                                                       | P   | Status   | Depends      | Acceptance / evidence                                                                          |
+| ---------------------------------------------------------- | --- | -------- | ------------ | ---------------------------------------------------------------------------------------------- |
+| Icons 16/48/128                                            | P0  | done     |              | `static/icons/`, referenced in the manifest                                                    |
+| Security review                                            | P0  | done     |              | 2026-11-21: 0 blockers, 0 should-fix, 5 notes. Notes applied: ADR-009 and SECURITY.md wording. |
+| Live Instagram verification                                | P0  | **open** | user account | Run the TESTING.md Instagram checklist logged in and record the results                        |
+| Live logged-in YouTube home feed check                     | P1  | **open** | user account | Logged-out home showed no feed, so the home shelves are verified only against fixtures         |
+| Load in branded Chrome via "Load unpacked"                 | P0  | **open** | user         | Automated checks use bundled Chromium. The user confirms in Chrome 157.                        |
+| Chrome Web Store listing (screenshots, justification text) | P2  | open     |              | Not required for the MVP. In the dashboard, declare "no user data collected" (PRIVACY.md).     |
 
 ## Backlog
 

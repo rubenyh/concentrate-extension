@@ -60,3 +60,9 @@ Lightweight ADR log. Each entry gives the status, the context, the decision and 
 - **Context**: Instagram class names are obfuscated and rotate.
 - **Decision**: `a[href*="/reel/"]` and `a[href$="/reels/"]`, excluding `/explore/` hashtag links, hide only the anchor itself.
 - **Trade-off**: an empty slot can remain in a grid, but no unrelated post can disappear.
+
+## ADR-009 — HTTPS-only host patterns and `frame-ancestors 'none'`
+
+- **Status**: accepted (2026-11-21), from the pre-release security review.
+- **Decision**: Host permissions, content-script matches and web-accessible matches use `https://` only. Both sites upgrade `http://` with a server redirect, and the redirected HTTPS load then hits the DNR rules. The extension-pages CSP adds `frame-ancestors 'none'`, so the sites cannot frame `blocked.html` and drive its "Go back" button.
+- **Trade-off**: none observed. The E2E suite passes unchanged.

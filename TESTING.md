@@ -86,6 +86,8 @@ Run with the built extension. Use Playwright's bundled Chromium, or Chrome with 
   - `npm run test:e2e`: 14 passed.
   - Live YouTube Y1–Y5 passed (logged out).
   - Instagram live: not run.
+  - Security review (general-purpose agent following `.claude/agents/security-reviewer.md`): no blockers, `npm audit` reports 0 vulnerabilities.
+  - After ADR-009 (https-only hosts and CSP): `npm run check` and `npm run test:e2e` (14) still pass.
 
 ## Known testing limitations
 

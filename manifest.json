@@ -12,36 +12,39 @@
   "permissions": ["declarativeNetRequestWithHostAccess"],
   "homepage_url": "https://github.com/rubenyh/concentrate-extension",
   "host_permissions": [
-    "*://www.youtube.com/*",
-    "*://m.youtube.com/*",
-    "*://youtube.com/*",
-    "*://www.instagram.com/*"
+    "https://www.youtube.com/*",
+    "https://m.youtube.com/*",
+    "https://youtube.com/*",
+    "https://www.instagram.com/*"
   ],
   "declarative_net_request": {
     "rule_resources": [{ "id": "block_routes", "enabled": true, "path": "rules.json" }]
   },
   "content_scripts": [
     {
-      "matches": ["*://www.youtube.com/*", "*://m.youtube.com/*", "*://youtube.com/*"],
+      "matches": ["https://www.youtube.com/*", "https://m.youtube.com/*", "https://youtube.com/*"],
       "css": ["youtube.css"],
       "js": ["youtube.js"],
       "run_at": "document_start"
     },
     {
-      "matches": ["*://www.instagram.com/*"],
+      "matches": ["https://www.instagram.com/*"],
       "css": ["instagram.css"],
       "js": ["instagram.js"],
       "run_at": "document_start"
     }
   ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; frame-ancestors 'none'"
+  },
   "web_accessible_resources": [
     {
       "resources": ["blocked.html"],
       "matches": [
-        "*://www.youtube.com/*",
-        "*://m.youtube.com/*",
-        "*://youtube.com/*",
-        "*://www.instagram.com/*"
+        "https://www.youtube.com/*",
+        "https://m.youtube.com/*",
+        "https://youtube.com/*",
+        "https://www.instagram.com/*"
       ]
     }
   ]

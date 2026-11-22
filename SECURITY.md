@@ -7,16 +7,16 @@
   - Everything that runs ships in the package.
   - Nothing is fetched, evaluated or injected as HTML.
   - The MV3 default CSP applies.
-- **Untrusted input stays inert**: page content is never read into code paths. The block page's only parameter (`?from=`) is accepted only if it is in an allowlist, and it is written with `textContent`.
+- **Untrusted input stays inert**: the guard reads only `location` and the `href` of a clicked link, and only classifies them. Block-page URLs are built from `location.hostname`, never from a link. The block page's only parameter (`?from=`) is accepted only if it is in an allowlist, and it is written with `textContent`.
 - **Reviewable build**: the bundles are not minified, so the shipped code reads like the source.
 
 ## Permissions
 
-| Permission                                                          | Why                                                             |
-| ------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `declarativeNetRequestWithHostAccess`                               | Static rules redirect Shorts/Reels page loads to the block page |
-| `*://www.youtube.com/*`, `*://m.youtube.com/*`, `*://youtube.com/*` | DNR redirects and content scripts on YouTube                    |
-| `*://www.instagram.com/*`                                           | DNR redirects and content scripts on Instagram                  |
+| Permission                                                                      | Why                                                             |
+| ------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `declarativeNetRequestWithHostAccess`                                           | Static rules redirect Shorts/Reels page loads to the block page |
+| `https://www.youtube.com/*`, `https://m.youtube.com/*`, `https://youtube.com/*` | DNR redirects and content scripts on YouTube                    |
+| `https://www.instagram.com/*`                                                   | DNR redirects and content scripts on Instagram                  |
 
 `blocked.html` is web-accessible to those hosts only, because Chrome requires this for DNR redirect targets.
 
