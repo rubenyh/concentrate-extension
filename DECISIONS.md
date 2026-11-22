@@ -1,0 +1,62 @@
+# Decisions
+
+Lightweight ADR log. Each entry gives the status, the context, the decision and the trade-off.
+
+## ADR-001 — Two-layer blocking: routes (DNR + guard) and surfaces (CSS)
+
+- **Status**: accepted (2026-11-21).
+- **Context**: Hiding buttons alone does not stop shared links, search results or Back navigation. DNR sees only network requests, never `pushState`.
+- **Decision**: DNR static rules handle full loads. A content-script guard handles SPA navigation and link clicks. CSS hides entry points.
+- **Alternatives rejected**:
+  - DNR only: misses SPA navigation.
+  - JS only: the Short starts loading before the script reacts on a full load.
+  - `webNavigation` plus a service worker: an extra permission and a background process.
+
+## ADR-002 — Classifier is the source of truth; `rules.json` hand-mirrored
+
+- **Status**: accepted.
+- **Decision**: Write `static/rules.json` by hand. `tests/unit/rules.test.ts` asserts it agrees with `classify.ts` on a shared URL table.
+- **Trade-off**: the same intent is written twice, but the parity test catches drift. A rules generator was rejected as more code than the duplication it removes.
+
+## ADR-003 — CSS `:has()` instead of a MutationObserver
+
+- **Status**: accepted.
+- **Context**: The sites render content late (infinite scroll, SPA). The usual answer is a MutationObserver with throttled scans.
+- **Decision**: Static stylesheets in `content_scripts.css`. The browser applies them to every later node with no JS, no lifecycle, no cleanup and no mutation loops.
+- **Trade-off**: elements are hidden, not removed, so they stay in the DOM. Detection can only express what a selector can express. Add an observer only for a surface that needs JS logic, and document it here.
+
+## ADR-004 — Navigation API for SPA route changes
+
+- **Status**: accepted. The E2E tests verified that `currententrychange` fires in the content-script isolated world for page-initiated `pushState`.
+- **Alternatives rejected**:
+  - Patching `history.pushState`: needs a main-world injection.
+  - Site events such as `yt-navigate-finish`: site-specific and undocumented.
+  - URL polling: permanent CPU cost.
+- **Consequence**: requires Chrome 102 or later. `minimum_chrome_version` is 120 (for `:has()` and stable APIs).
+
+## ADR-005 — `blocked.html` web-accessible without `use_dynamic_url`
+
+- **Status**: accepted (2026-11-21).
+- **Context**: Chrome requires a DNR redirect target to be web accessible. `use_dynamic_url: true` would reduce fingerprinting.
+- **Finding** (E2E, Chromium bundled with Playwright 1.65.1, 2026-11-21): with `use_dynamic_url: true`, DNR `extensionPath` redirects fail with `net::ERR_BLOCKED_BY_CLIENT`.
+- **Decision**: Expose the static URL, only to the four matched hosts.
+- **Trade-off**: YouTube and Instagram could detect the extension.
+
+## ADR-006 — `location.assign` for clicks, `location.replace` for routes already in history
+
+- **Status**: accepted. See ARCHITECTURE.md "Runtime flows". This prevents both lost history and Back loops.
+
+## ADR-007 — esbuild + npm; no framework, no popup, no service worker
+
+- **Status**: accepted.
+- **Decision**: The MVP has no UI beyond the block page and no settings.
+- **Alternatives rejected**:
+  - Vite/CRXJS: adds a dev server and plugin layers for three tiny bundles.
+  - pnpm: an extra install step for contributors, with no benefit at this size.
+
+## ADR-008 — Instagram selectors hide links only, never ancestors
+
+- **Status**: accepted.
+- **Context**: Instagram class names are obfuscated and rotate.
+- **Decision**: `a[href*="/reel/"]` and `a[href$="/reels/"]`, excluding `/explore/` hashtag links, hide only the anchor itself.
+- **Trade-off**: an empty slot can remain in a grid, but no unrelated post can disappear.
