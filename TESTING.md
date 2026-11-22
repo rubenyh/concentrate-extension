@@ -89,7 +89,7 @@ Run with the built extension. Use Playwright's bundled Chromium, or Chrome with 
   - `npm run test:e2e`: 14 passed.
   - Live YouTube Y1–Y5 passed (logged out).
   - Instagram live (CSS and tagger injected, logged in): I2–I4, I6 and I7 pass; I5 partial (see table). 20 tagger scans over 48 articles took 20.4 ms. No console errors.
-  - After the feed filters were added: `npm run check` (129 unit tests) and `npm run test:e2e` (17) pass.
+  - After the feed filters were added: `npm run check` (129 unit tests) and `npm run test:e2e` (17) pass. After the security-review fixes (tagger runs on home only): 18 E2E pass.
   - Security review (general-purpose agent following `.claude/agents/security-reviewer.md`): no blockers, `npm audit` reports 0 vulnerabilities.
   - After ADR-009 (https-only hosts and CSP): `npm run check` and `npm run test:e2e` (14) still pass.
 

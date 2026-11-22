@@ -78,7 +78,10 @@ Lightweight ADR log. Each entry gives the status, the context, the decision and 
 - **Alternatives rejected**:
   - Messaging through a service worker: more moving parts for two booleans.
   - Injecting and removing stylesheets per toggle: more code than attribute scoping.
-- **Trade-off**: `storage.sync` syncs the two values through the user's Chrome sync. They contain no browsing data (PRIVACY.md).
+- **Trade-off**:
+  - `storage.sync` syncs the two values through the user's Chrome sync. They contain no browsing data (PRIVACY.md).
+  - Instagram can read the `data-rsb-*` attributes, so it can detect the extension and its toggle state. This is accepted, like ADR-005.
+- **Amendment** (security review, 2026-11-21): the suggested-post tagger runs only while the route is `/` and the toggle is on. It is stopped on every other route.
 
 ## ADR-011 — MutationObserver for suggested Instagram posts (exception to ADR-003)
 

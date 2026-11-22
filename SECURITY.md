@@ -6,8 +6,8 @@
 - **No remote code**:
   - Everything that runs ships in the package.
   - Nothing is fetched, evaluated or injected as HTML.
-  - The MV3 default CSP applies.
-- **Untrusted input stays inert**: the guard reads only `location` and the `href` of a clicked link, and only classifies them. Block-page URLs are built from `location.hostname`, never from a link. The block page's only parameter (`?from=`) is accepted only if it is in an allowlist, and it is written with `textContent`.
+  - A strict extension-pages CSP applies: `script-src 'self'; object-src 'self'; frame-ancestors 'none'`.
+- **Untrusted input stays inert**: the guard reads only `location` and the `href` of a clicked link, and only classifies them. Block-page URLs are built from `location.hostname`, never from a link. On the Instagram home feed, the suggested-post tagger reads button text inside posts, compares it with a fixed string, and writes only the `data-rsb-suggested` attribute. The block page's only parameter (`?from=`) is accepted only if it is in an allowlist, and it is written with `textContent`.
 - **Reviewable build**: the bundles are not minified, so the shipped code reads like the source.
 
 ## Permissions
@@ -23,13 +23,13 @@
 
 ## Threat considerations
 
-| Threat                                                  | Mitigation                                                                                                                      |
-| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| A site page manipulates the content script              | The isolated world shares no JS with the page. The guard reads only `location` and anchor `href`s and only performs navigation. |
-| The block-page parameter is abused (XSS, open redirect) | The `from` host is checked against a fixed allowlist, and link targets come from that allowlist                                 |
-| Supply-chain compromise                                 | Zero runtime dependencies. Dev dependencies are locked in `package-lock.json`. Use `npm ci` and `npm audit` before releases.    |
-| Over-broad permissions in later changes                 | Any permission change needs a DECISIONS.md entry and a `security-reviewer` pass (`.claude/rules/content-scripts.md`)            |
-| Fingerprinting by the sites                             | Known: `blocked.html` is reachable from the two sites (ADR-005)                                                                 |
+| Threat                                                  | Mitigation                                                                                                                                                                                                                                      |
+| ------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A site page manipulates the content script              | The isolated world shares no JS with the page. The guard reads only `location` and anchor `href`s and only performs navigation. The tagger only compares button text with "Follow": a page that fakes such a button can only hide its own post. |
+| The block-page parameter is abused (XSS, open redirect) | The `from` host is checked against a fixed allowlist, and link targets come from that allowlist                                                                                                                                                 |
+| Supply-chain compromise                                 | Zero runtime dependencies. Dev dependencies are locked in `package-lock.json`. Use `npm ci` and `npm audit` before releases.                                                                                                                    |
+| Over-broad permissions in later changes                 | Any permission change needs a DECISIONS.md entry and a `security-reviewer` pass (`.claude/rules/content-scripts.md`)                                                                                                                            |
+| Fingerprinting by the sites                             | Known: `blocked.html` is reachable from the two sites (ADR-005). Instagram can also read the `data-rsb-*` attributes on its own `<html>` and posts, which reveal that the extension is installed and which toggles are on (ADR-010). Accepted.  |
 
 ## Dependencies
 

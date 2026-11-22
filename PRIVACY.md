@@ -15,7 +15,7 @@ None. The extension:
 
 - **The URL of YouTube and Instagram tabs**: when the page loads, when the site navigates, and the `href` of a link you click. It compares the URL against fixed patterns to decide whether to block it. The result is never stored or sent anywhere.
 - **Page loads to those sites**: Chrome's declarativeNetRequest engine matches them against the extension's static rules. Chrome evaluates the rules, and the extension's code does not see the requests.
-- **The structure of Instagram home-feed posts**, when "Only show accounts I follow" is on: it checks whether a post contains a "Follow" button, in order to hide it. It does not read captions, comments, images or usernames, and it records nothing.
+- **Button text in Instagram home-feed posts**, only on the home feed and only when "Only show accounts I follow" is on: it compares the text of each button inside a post with "Follow", in order to hide posts from accounts you do not follow. That text can include usernames. It is compared in memory and never stored or sent anywhere.
 
 The extension does not run on any other website.
 
