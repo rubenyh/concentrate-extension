@@ -1,15 +1,33 @@
 /*
  * Instagram Reels surfaces. Every selector here must have positive and negative fixtures in
- * tests/fixtures/instagram/ (see tests/unit/selectors.test.ts). Instagram class names are
- * obfuscated and rotate, so only href-based selectors are used, and only the link itself is
- * hidden (never an ancestor), which keeps false positives contained.
+ * tests/fixtures/instagram.html (see tests/unit/selectors.test.ts). Instagram class names are
+ * obfuscated and rotate, so selectors use hrefs, tags and aria-labels only.
+ * Markup verified live 2026-11-21 (logged in, English UI).
  */
+
+/* Always on: hide the link itself (never an ancestor), which keeps false positives contained. */
 
 /* Reels navigation link (/reels/) and profile Reels tab (/{user}/reels/).
    Hashtag links such as /explore/tags/reels/ are excluded. */
 a[href$="/reels/"]:not([href^="/explore/"]),
 
-/* Reel tiles in profile grids, Explore, search, and reel links in feed posts. */
-a[href*="/reel/"] {
+/* Reel tiles in profile grids (/{user}/reel/{id}/). */
+a[href*="/reel/"],
+
+/* Reel tiles that link as /p/{id}/: Explore marks them "Reel", profile grids "Clip" (English UI). */
+a[href*="/p/"]:has(svg[aria-label="Reel"], svg[aria-label="Clip"]) {
+  display: none !important;
+}
+
+/* Home-feed toggles (popup). Attributes on <html> are set by src/content/instagram.ts.
+   Feed posts are <article> elements; whole posts are hidden here. */
+
+/* "Hide reels": a feed reel's media is a /reels/{id}/ link wrapping a <video>. */
+html[data-rsb-home][data-rsb-hide-feed-reels] article:has(a[href^="/reels/"] video),
+
+/* "Only show accounts I follow": ads have no <time>; suggested posts are tagged by
+   src/content/suggested.ts (in-post "Follow" button). */
+html[data-rsb-home][data-rsb-followed-only] article:not(:has(time)),
+html[data-rsb-home][data-rsb-followed-only] article[data-rsb-suggested] {
   display: none !important;
 }

@@ -53,18 +53,20 @@ async function addSpaLink(page: Page, href: string): Promise<void> {
 }
 
 async function expectSurfacesFiltered(page: Page): Promise<void> {
-  const result = await page.evaluate(() => {
-    const visible = (el: Element): boolean => el.checkVisibility();
-    return {
-      shownButShouldHide: [...document.querySelectorAll('[data-expect="hidden"]')]
-        .filter(visible)
-        .map((el) => el.outerHTML.slice(0, 80)),
-      hiddenButShouldShow: [...document.querySelectorAll('[data-expect="visible"]')]
-        .filter((el) => !visible(el))
-        .map((el) => el.outerHTML.slice(0, 80)),
-    };
-  });
-  expect(result).toEqual({ shownButShouldHide: [], hiddenButShouldShow: [] });
+  // Polls: suggested-post tagging runs on the next animation frame after the DOM changes.
+  const result = () =>
+    page.evaluate(() => {
+      const visible = (el: Element): boolean => el.checkVisibility();
+      return {
+        shownButShouldHide: [...document.querySelectorAll('[data-expect="hidden"]')]
+          .filter(visible)
+          .map((el) => el.outerHTML.slice(0, 80)),
+        hiddenButShouldShow: [...document.querySelectorAll('[data-expect="visible"]')]
+          .filter((el) => !visible(el))
+          .map((el) => el.outerHTML.slice(0, 80)),
+      };
+    });
+  await expect.poll(result).toEqual({ shownButShouldHide: [], hiddenButShouldShow: [] });
 }
 
 test.describe('YouTube', () => {
@@ -125,7 +127,31 @@ test.describe('Instagram', () => {
       await page.goto(`https://www.instagram.com${path}`);
       await expect(page).toHaveURL(`https://www.instagram.com${path}`);
     }
+  });
+
+  test('home feed hides reels, suggested posts and ads; nav and grid reels are hidden', async ({
+    page,
+  }) => {
+    await page.goto('https://www.instagram.com/');
     await expectSurfacesFiltered(page);
+  });
+
+  test('suggested posts rendered after load are hidden', async ({ page }) => {
+    await page.goto('https://www.instagram.com/');
+    await page.evaluate(() => {
+      const article = document.createElement('article');
+      article.id = 'late';
+      article.innerHTML =
+        '<a href="/late/">late</a><a href="/p/late/"><time>1h</time></a><div role="button"></div>';
+      document.querySelector('.feed')?.append(article);
+      // Instagram renders the Follow label after the post itself.
+      setTimeout(() => {
+        const button = article.querySelector('[role="button"]');
+        if (button) button.textContent = 'Follow';
+      }, 50);
+    });
+    await expect(page.locator('#late')).toBeHidden();
+    await expect(page.locator('#late')).toHaveAttribute('data-rsb-suggested', '');
   });
 
   test('SPA navigation to a Reel is blocked', async ({ page }) => {
@@ -173,10 +199,20 @@ test('popup toggles update Instagram home-feed filters live', async ({ context, 
   await hideReels.uncheck();
   await expect(html).not.toHaveAttribute('data-rsb-hide-feed-reels', '');
   await expect(html).toHaveAttribute('data-rsb-followed-only', '');
+  const feed = (type: string) => page.locator(`article[data-feed="${type}"]`);
+  await expect(feed('followed-reel')).toBeVisible();
+  await expect(feed('suggested-reel')).toBeHidden(); // still not followed
+  await expect(feed('ad')).toBeHidden();
+
+  await probe.getByLabel('Only show accounts I follow').uncheck();
+  await expect(feed('suggested-reel')).toBeVisible();
+  await expect(feed('suggested-photo')).toBeVisible();
+  await expect(feed('ad')).toBeVisible();
+  await expect(feed('suggested-photo')).not.toHaveAttribute('data-rsb-suggested', '');
 
   await probe.reload();
   await expect(probe.getByLabel('Hide reels')).not.toBeChecked();
-  await expect(probe.getByLabel('Only show accounts I follow')).toBeChecked();
+  await expect(probe.getByLabel('Only show accounts I follow')).not.toBeChecked();
 
   await page.evaluate(() => history.pushState({}, '', '/someuser/'));
   await expect(html).not.toHaveAttribute('data-rsb-home', '');

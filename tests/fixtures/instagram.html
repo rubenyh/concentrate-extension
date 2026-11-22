@@ -1,9 +1,10 @@
 <!doctype html>
 <!--
-  Hand-trimmed model of Instagram web markup (structure observed 2026; not a verbatim snapshot).
-  Instagram class names are obfuscated, so only element roles and hrefs are modeled.
-  data-expect="hidden": a Reels surface that static/instagram.css must hide.
+  Hand-trimmed model of Instagram web markup, based on a live logged-in inspection on 2026-11-21
+  (English UI). It is not a verbatim snapshot: class names are obfuscated upstream and omitted here.
+  data-expect="hidden": a surface that static/instagram.css must hide, with both home-feed toggles on.
   data-expect="visible": regular content that must stay visible.
+  data-feed: the post type, used by the E2E toggle tests.
   Also served by Playwright as https://www.instagram.com/ (tests/e2e).
 -->
 <html lang="en">
@@ -18,7 +19,7 @@
       <a data-expect="visible" href="/direct/inbox/">Messages</a>
     </nav>
 
-    <main>
+    <main role="main">
       <div role="tablist">
         <a data-expect="visible" href="/someuser/">Posts</a>
         <a data-expect="hidden" href="/someuser/reels/">Reels</a>
@@ -27,15 +28,96 @@
 
       <div class="grid">
         <a data-expect="visible" id="post-link" href="/p/C0postId/">Regular post</a>
+        <a data-expect="visible" href="/someuser/p/C0postId3/">
+          Carousel tile <svg aria-label="Carousel"></svg>
+        </a>
         <a data-expect="hidden" id="reel-link" href="/reel/C0reelId/">Reel tile</a>
-        <a data-expect="hidden" href="/someuser/reel/C0reelId2/">Profile-scoped reel tile</a>
+        <a data-expect="hidden" href="/someuser/reel/C0reelId2/">
+          Profile-scoped reel tile <svg aria-label="Clip"></svg>
+        </a>
+        <a data-expect="hidden" href="/p/C0exploreReel/">
+          Explore reel tile <svg aria-label="Reel"></svg>
+        </a>
       </div>
 
-      <article data-expect="visible">
-        <a data-expect="visible" href="/someuser/">someuser</a>
-        <a data-expect="visible" href="/explore/tags/reels/">#reels</a>
-        <a data-expect="visible" href="/stories/someuser/">Story</a>
-      </article>
+      <div class="feed">
+        <article data-expect="visible" data-feed="followed-photo">
+          <div>
+            <div role="button" tabindex="-1" aria-disabled="true"><canvas></canvas></div>
+            <a data-expect="visible" href="/someuser/">someuser</a>
+            <a href="/p/C0feedPhoto/"><time datetime="2026-11-20T10:00:00Z">14h</time></a>
+            <div role="button" aria-haspopup="dialog"><svg aria-label="More options"></svg></div>
+          </div>
+          <img alt="" />
+          <section>
+            <div role="button"><svg aria-label="Like"></svg></div>
+          </section>
+          <a data-expect="visible" href="/explore/tags/reels/">#reels</a>
+          <a data-expect="visible" href="/stories/someuser/">Story</a>
+          <div role="button">more</div>
+        </article>
+
+        <article data-expect="hidden" data-feed="followed-reel">
+          <div>
+            <a href="/someuser/">someuser</a>
+            <a href="/p/C0feedReel/"><time datetime="2026-11-17T10:00:00Z">4d</time></a>
+            <a href="/reels/audio/123/"><span>Original audio</span></a>
+            <div role="button" aria-haspopup="dialog"><svg aria-label="More options"></svg></div>
+          </div>
+          <a href="/reels/C0feedReel/"
+            ><div><video playsinline preload="none"></video></div
+          ></a>
+        </article>
+
+        <article data-expect="hidden" data-feed="suggested-reel">
+          <div>
+            <div role="button" tabindex="0"><canvas></canvas></div>
+            <a href="/stranger/">stranger</a>
+            <a href="/p/C0suggestedReel/"><time datetime="2026-11-14T10:00:00Z">1w</time></a>
+            <span dir="auto"
+              ><span>Suggested for you</span><a href="/reels/audio/456/">Original audio</a></span
+            >
+            <div role="button" tabindex="0">Follow</div>
+            <div role="button" aria-haspopup="dialog"><svg aria-label="More options"></svg></div>
+          </div>
+          <a href="/reels/C0suggestedReel/"
+            ><div><video playsinline preload="none"></video></div
+          ></a>
+        </article>
+
+        <article data-expect="hidden" data-feed="suggested-photo">
+          <div>
+            <a href="/stranger2/">stranger2</a>
+            <a href="/p/C0suggestedPhoto/"><time datetime="2026-11-14T10:00:00Z">1w</time></a>
+            <span><span>Suggested for you</span></span>
+            <div role="button" tabindex="0">Follow</div>
+          </div>
+          <img alt="" />
+        </article>
+
+        <article data-expect="hidden" data-feed="ad">
+          <div>
+            <a href="/brand/?utm=ad">brand</a>
+            <span dir="auto"><span>Ad</span></span>
+            <div role="button" aria-haspopup="dialog"><svg aria-label="More options"></svg></div>
+          </div>
+          <a
+            href="https://www.facebook.com/l.php"
+            rel="nofollow noopener noreferrer"
+            target="_blank"
+            >Shop now</a
+          >
+        </article>
+
+        <article data-expect="visible" data-feed="followed-after-follow">
+          <div>
+            <a href="/newfriend/">newfriend</a>
+            <a href="/p/C0following/"><time datetime="2026-11-20T10:00:00Z">2h</time></a>
+            <div role="button" tabindex="0">Following</div>
+          </div>
+          <img alt="" />
+        </article>
+      </div>
     </main>
   </body>
 </html>
