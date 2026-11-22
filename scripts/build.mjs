@@ -16,6 +16,7 @@ await build({
     youtube: join(root, 'src/content/youtube.ts'),
     instagram: join(root, 'src/content/instagram.ts'),
     blocked: join(root, 'src/blocked.ts'),
+    popup: join(root, 'src/popup.ts'),
   },
   outdir: dist,
   bundle: true,

@@ -154,3 +154,30 @@ test('a blocked page opened in a fresh tab offers the home page', async ({ conte
     'https://www.instagram.com/',
   );
 });
+
+test('popup toggles update Instagram home-feed filters live', async ({ context, page }) => {
+  await page.goto('https://www.instagram.com/');
+  const html = page.locator('html');
+  await expect(html).toHaveAttribute('data-rsb-home', '');
+  await expect(html).toHaveAttribute('data-rsb-hide-feed-reels', '');
+  await expect(html).toHaveAttribute('data-rsb-followed-only', '');
+
+  // The extension id is the host of the block page a blocked route redirects to.
+  const probe = await context.newPage();
+  await probe.goto('https://www.instagram.com/reels/');
+  const extensionId = new URL(probe.url()).host;
+  await probe.goto(`chrome-extension://${extensionId}/popup.html`);
+
+  const hideReels = probe.getByLabel('Hide reels');
+  await expect(hideReels).toBeChecked();
+  await hideReels.uncheck();
+  await expect(html).not.toHaveAttribute('data-rsb-hide-feed-reels', '');
+  await expect(html).toHaveAttribute('data-rsb-followed-only', '');
+
+  await probe.reload();
+  await expect(probe.getByLabel('Hide reels')).not.toBeChecked();
+  await expect(probe.getByLabel('Only show accounts I follow')).toBeChecked();
+
+  await page.evaluate(() => history.pushState({}, '', '/someuser/'));
+  await expect(html).not.toHaveAttribute('data-rsb-home', '');
+});

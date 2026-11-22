@@ -9,7 +9,12 @@
     "48": "icons/icon-48.png",
     "128": "icons/icon-128.png"
   },
-  "permissions": ["declarativeNetRequestWithHostAccess"],
+  "permissions": ["declarativeNetRequestWithHostAccess", "storage"],
+  "action": {
+    "default_title": "Reels & Shorts Blocker",
+    "default_popup": "popup.html",
+    "default_icon": { "16": "icons/icon-16.png", "48": "icons/icon-48.png" }
+  },
   "homepage_url": "https://github.com/rubenyh/concentrate-extension",
   "host_permissions": [
     "https://www.youtube.com/*",
