@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Reels & Shorts Blocker",
+  "version": "0.1.0",
+  "description": "Blocks Instagram Reels and YouTube Shorts while keeping the rest of both sites usable.",
+  "minimum_chrome_version": "120",
+  "permissions": ["declarativeNetRequestWithHostAccess"],
+  "host_permissions": [
+    "*://www.youtube.com/*",
+    "*://m.youtube.com/*",
+    "*://youtube.com/*",
+    "*://www.instagram.com/*"
+  ],
+  "declarative_net_request": {
+    "rule_resources": [{ "id": "block_routes", "enabled": true, "path": "rules.json" }]
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://www.youtube.com/*", "*://m.youtube.com/*", "*://youtube.com/*"],
+      "css": ["youtube.css"],
+      "js": ["youtube.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["*://www.instagram.com/*"],
+      "css": ["instagram.css"],
+      "js": ["instagram.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["blocked.html"],
+      "matches": [
+        "*://www.youtube.com/*",
+        "*://m.youtube.com/*",
+        "*://youtube.com/*",
+        "*://www.instagram.com/*"
+      ],
+      "use_dynamic_url": true
+    }
+  ]
+}
