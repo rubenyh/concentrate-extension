@@ -84,7 +84,7 @@ Lightweight ADR log. Each entry gives the status, the context, the decision and 
 
 - **Status**: accepted (2026-11-21).
 - **Context**: The live inspection on 2026-11-21 (logged in, English UI, 30 posts) found one reliable signal for posts from unfollowed accounts: an in-post `[role=button]` with the text "Follow". It was on 14 of 14 suggested posts and on 0 of 16 followed posts. Feed `<article>`s have no other structural marker. CSS cannot match text.
-- **Decision**: `src/content/suggested.ts` observes the document (childList, subtree, characterData). It coalesces mutations into one rescan per animation frame. The feed is virtualized, so there are only 5–9 articles to scan. It toggles `data-rsb-suggested`, which CSS hides. The observer runs only while the toggle is on. It ignores attribute mutations, so its own writes cannot loop. It uses `textContent`, because Instagram keeps rotated-out labels hidden in the DOM.
+- **Decision**: `src/content/suggested.ts` observes the document (childList, subtree, characterData). It coalesces mutations into one rescan per animation frame. A rescan of 48 feed articles took about 1 ms in the live check. Instagram sometimes virtualizes the feed down to 5–9 articles, and sometimes keeps every article it has loaded. It toggles `data-rsb-suggested`, which CSS hides. The observer runs only while the toggle is on. It ignores attribute mutations, so its own writes cannot loop. It uses `textContent`, because Instagram keeps rotated-out labels hidden in the DOM.
 - **Trade-off**:
   - Language-dependent: the English "Follow" label only.
   - Ads need no JS: they lack `<time>` (17 of 17 ads, 0 of 30 posts).

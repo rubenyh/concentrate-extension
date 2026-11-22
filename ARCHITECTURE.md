@@ -73,7 +73,7 @@ sequenceDiagram
 2. At `document_start` the guard checks the current URL and registers two listeners. It holds no other state.
 3. Nothing needs cleanup. The listeners live as long as the document.
 4. Instagram only: the content script sets attributes on `<html>`: `data-rsb-home` (route is `/`), and `data-rsb-hide-feed-reels` / `data-rsb-followed-only` (toggles). The defaults apply first, then the stored values, then live updates through `chrome.storage.onChanged`. CSS rules in `instagram.css` are scoped by these attributes, so toggling needs no reload.
-5. While "Only show accounts I follow" is on, `src/content/suggested.ts` runs one MutationObserver (childList, subtree, characterData). It rescans the 5–9 virtualized feed `article`s once per animation frame and tags posts that contain a `Follow` button with `data-rsb-suggested`. Turning the toggle off disconnects it and removes the tags (ADR-011).
+5. While "Only show accounts I follow" is on, `src/content/suggested.ts` runs one MutationObserver (childList, subtree, characterData). It rescans the feed `article`s at most once per animation frame (about 1 ms for 48 articles, measured live) and tags posts that contain a `Follow` button with `data-rsb-suggested`. Turning the toggle off disconnects it and removes the tags (ADR-011).
 
 ## Browser APIs and permissions
 

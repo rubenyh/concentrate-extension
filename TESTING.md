@@ -58,14 +58,17 @@ Run with the built extension. Use Playwright's bundled Chromium, or Chrome with 
 
 ### Instagram (needs a logged-in account)
 
-| #   | Step                                                   | Expected                                           | Result     |
-| --- | ------------------------------------------------------ | -------------------------------------------------- | ---------- |
-| I1  | Open `https://www.instagram.com/reels/`                | Block page                                         | Unverified |
-| I2  | Sidebar                                                | No Reels link                                      | Unverified |
-| I3  | Open a profile with reels                              | No Reels tab, no reel tiles in the grid            | Unverified |
-| I4  | Click a reel from Explore or search, if any is visible | Block page                                         | Unverified |
-| I5  | Open a regular post, view stories, send a DM           | Work normally                                      | Unverified |
-| I6  | Scroll the home feed                                   | Note any reel cards still shown (known limitation) | Unverified |
+| #   | Step                                                            | Expected                                           | Result                                                                                                                                           |
+| --- | --------------------------------------------------------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| I1  | Open `https://www.instagram.com/reels/`                         | Block page                                         | Unverified live (extension not installed in the live browser). Covered by E2E.                                                                   |
+| I2  | Sidebar                                                         | No Reels link                                      | **Pass** 2026-11-21*                                                                                                                             |
+| I3  | Open a profile with reels                                       | No Reels tab, no reel tiles in the grid            | **Pass** 2026-11-21*: tab hidden, 10/10 `/reel/` tiles hidden, 14/14 `/p/` tiles visible                                                         |
+| I4  | Click a reel from Explore or search, if any is visible          | Block page                                         | **Pass** 2026-11-21*: 44/44 Explore reel tiles hidden, 0/12 other tiles hidden, so none clickable                                                |
+| I5  | Open a regular post, view stories, send a DM                    | Work normally                                      | Partial 2026-11-21*: post dialog visible, profile tabs and buttons visible. Stories and DMs not checked.                                         |
+| I6  | Scroll the home feed, both toggles on                           | Only followed non-reel posts visible               | **Pass** 2026-11-21*: 48 posts, 0 mismatches (2 followed posts visible; 18 followed reels, 13 suggested reels, 5 suggested posts, 10 ads hidden) |
+| I7  | Toggle "Hide reels" off, then "Only show accounts I follow" off | Followed reels reappear; then everything reappears | **Pass** 2026-11-21* (attribute toggles)                                                                                                         |
+
+\* Live check by a separate Claude session with Claude in Chrome in the user's logged-in Chrome (English UI). The extension's built CSS and tagging logic were injected into the page, because the unpacked extension was not installed there. Route blocking (DNR, guard) was therefore not exercised live on Instagram. Only 2 followed non-reel posts were in the sample, so the evidence against false positives is thin. The profile grid had no "Clip" tiles, so that selector is unverified live.
 
 ### Shared
 
@@ -85,7 +88,8 @@ Run with the built extension. Use Playwright's bundled Chromium, or Chrome with 
   - `npm run check`: 122 unit tests passed.
   - `npm run test:e2e`: 14 passed.
   - Live YouTube Y1–Y5 passed (logged out).
-  - Instagram live: not run.
+  - Instagram live (CSS and tagger injected, logged in): I2–I4, I6 and I7 pass; I5 partial (see table). 20 tagger scans over 48 articles took 20.4 ms. No console errors.
+  - After the feed filters were added: `npm run check` (129 unit tests) and `npm run test:e2e` (17) pass.
   - Security review (general-purpose agent following `.claude/agents/security-reviewer.md`): no blockers, `npm audit` reports 0 vulnerabilities.
   - After ADR-009 (https-only hosts and CSP): `npm run check` and `npm run test:e2e` (14) still pass.
 
