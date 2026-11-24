@@ -2,13 +2,14 @@
 
 ## Strategy
 
-| Layer            | Tool                                            | What it proves                                                                                                                                      |
-| ---------------- | ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Unit: routes     | Vitest (`tests/unit/classify.test.ts`)          | The classifier gets blocked and allowed URLs right, including query, slash, case, host and look-alike prefixes                                      |
-| Unit: DNR parity | Vitest (`tests/unit/rules.test.ts`)             | `static/rules.json` regexes agree with the classifier on the same table (`tests/unit/urls.ts`)                                                      |
-| Unit: selectors  | Vitest + jsdom (`tests/unit/selectors.test.ts`) | Every CSS selector hides a Shorts/Reels fixture element, none touches a regular one, and each selector has a positive fixture                       |
-| E2E              | Playwright (`tests/e2e/extension.spec.ts`)      | The built `dist/` in real Chromium: DNR redirects, SPA guard, click interception, Back/Forward, the block page, and computed visibility on fixtures |
-| Live             | Manual checklist below                          | Behavior on the real sites, which change without notice                                                                                             |
+| Layer            | Tool                                            | What it proves                                                                                                                                                   |
+| ---------------- | ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unit: routes     | Vitest (`tests/unit/classify.test.ts`)          | The classifier gets blocked and allowed URLs right, including query, slash, case, host and look-alike prefixes                                                   |
+| Unit: DNR parity | Vitest (`tests/unit/rules.test.ts`)             | `static/rules.json` regexes agree with the classifier on the same table (`tests/unit/urls.ts`)                                                                   |
+| Unit: tagger     | Vitest + jsdom (`tests/unit/suggested.test.ts`) | The suggested-post tagger stops cleanly (no queued scan runs after stop) on toggle-off and route change, restarts, and survives rapid toggling with one observer |
+| Unit: selectors  | Vitest + jsdom (`tests/unit/selectors.test.ts`) | Every CSS selector hides a Shorts/Reels fixture element, none touches a regular one, and each selector has a positive fixture                                    |
+| E2E              | Playwright (`tests/e2e/extension.spec.ts`)      | The built `dist/` in real Chromium: DNR redirects, SPA guard, click interception, Back/Forward, the block page, and computed visibility on fixtures              |
+| Live             | Manual checklist below                          | Behavior on the real sites, which change without notice                                                                                                          |
 
 Automated tests never contact the live sites. E2E serves `tests/fixtures/*.html` on `https://www.youtube.com/**` and `https://www.instagram.com/**` through `context.route`. DNR runs before the route handler, so blocked URLs never reach the fixture (verified).
 
@@ -92,6 +93,13 @@ Run with the built extension. Use Playwright's bundled Chromium, or Chrome with 
   - After the feed filters were added: `npm run check` (129 unit tests) and `npm run test:e2e` (17) pass. After the security-review fixes (tagger runs on home only): 18 E2E pass.
   - Security review (general-purpose agent following `.claude/agents/security-reviewer.md`): no blockers, `npm audit` reports 0 vulnerabilities.
   - After ADR-009 (https-only hosts and CSP): `npm run check` and `npm run test:e2e` (14) still pass.
+
+- 2026-11-23 (security remediation; Node 24.13.0 locally, below the new engines range, so npm warns `EBADENGINE`; CI uses Node 22):
+  - `npm ci`, `npm run check` (137 unit tests, 8 new in `tests/unit/suggested.test.ts`), `npm run build`, `npm run package`, `npm audit` (0 vulnerabilities) and `npm audit signatures` pass.
+  - `npm run test:e2e`: 18 passed. An earlier run on a heavily loaded machine had 1 failure in the Instagram home-feed test: once no content-script CSS was applied at all, and once the suggested post stayed untagged past the 5 s poll. Repeating the 10 Instagram tests 3 times with one worker then passed 30/30, and the final full run passed. Treated as load flakiness; watch for it in CI.
+  - The 3 tagger regression tests that cover a queued scan fail against the previous `suggested.ts` and pass on the fix.
+  - Zip: 15 files (manifest, 4 bundles, 3 HTML/CSS pairs, `rules.json`, 3 icons). No source maps, tests, `node_modules` or dotfiles. The bundles contain no `eval`, `new Function`, `innerHTML`, `fetch`, XHR or WebSocket. The only URLs are the two site-home links in `blocked.js`. Manifest permissions are unchanged.
+  - Live YouTube and Instagram were not re-tested: the change touches only the tagger's stop path, which the unit tests cover.
 
 ## Known testing limitations
 

@@ -65,6 +65,17 @@ Status: `done` (acceptance verified, with evidence), `open`, `blocked`. Priority
 | Hide Explore/profile reel tiles linked as `/p/`               | P1  | done     | Live I4: 44/44 hidden, 0 false positives                     |
 | Install unpacked build in the user's Chrome and re-run I1, I5 | P0  | **open** | User loads `dist/`                                           |
 
+## M9 — Security remediation (done)
+
+| Task                                                         | P   | Status | Acceptance / evidence                                                                                            |
+| ------------------------------------------------------------ | --- | ------ | ---------------------------------------------------------------------------------------------------------------- |
+| jsdom 29.1.1 → 30.1.3 (AIKIDO-2026-624296)                   | P0  | done   | `npm ls jsdom` shows 30.1.3 (also under vitest); `npm audit` 0 vulnerabilities; `npm ci` reproduces the lockfile |
+| Node engines synced (`^22.22.2 \|\| ^24.15.0 \|\| >=26.0.0`) | P0  | done   | Same range in `package.json` and the lockfile root; CI uses Node 22                                              |
+| Tagger cancels a queued scan on stop                         | P0  | done   | `tests/unit/suggested.test.ts`: 3 of 8 tests fail on the old code, all pass on the fix                           |
+| GitHub Actions CI                                            | P0  | done   | `.github/workflows/ci.yml`. **Unverified on GitHub**: not pushed yet; first run happens on the next PR           |
+| Dependabot (npm + actions, weekly, grouped)                  | P1  | done   | `.github/dependabot.yml`. Takes effect once on `main`                                                            |
+| Make the build copy only tracked `static/` files             | P2  | open   | Accepted risk for now (SECURITY.md); the release procedure lists the zip contents                                |
+
 ## Backlog
 
 | Task                                                 | P   | Notes                                              |

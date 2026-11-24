@@ -20,7 +20,7 @@ It runs entirely in your browser. It has no accounts, no servers and no analytic
 ## Requirements
 
 - Chrome 120 or later (desktop).
-- For development: Node.js 22 or later and npm.
+- For development: Node.js `^22.22.2 || ^24.15.0 || >=26.0.0` (the range jsdom 30 supports) and npm.
 
 ## Install (unpacked)
 
@@ -38,6 +38,8 @@ It runs entirely in your browser. It has no accounts, no servers and no analytic
 | `npm run test:e2e` | Build, then run Playwright against the unpacked extension (first run: `npx playwright install chromium`) |
 | `npm run package`  | Build plus `reels-shorts-blocker-<version>.zip` for the Chrome Web Store                                 |
 | `npm run format`   | Format with Prettier                                                                                     |
+
+CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm audit --audit-level=moderate`, `npm audit signatures`, the static checks, unit tests, build and E2E on every pull request to `main`, every push to `main`, and on demand. Dependabot (`.github/dependabot.yml`) proposes npm and GitHub Actions updates weekly.
 
 After changing code, run `npm run build` and click the reload icon on the extension card in `chrome://extensions`.
 
