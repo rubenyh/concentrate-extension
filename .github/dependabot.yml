@@ -1,0 +1,28 @@
+# Weekly dependency update PRs. Each PR targets main, so .github/workflows/ci.yml validates it.
+# No auto-merge: a maintainer reviews and merges every update. The cooldown waits a week after a
+# release before proposing it, so a hijacked publish is likely caught and yanked first. Security
+# updates ignore the cooldown.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    open-pull-requests-limit: 5
+    groups:
+      # Minor/patch dev-tool bumps arrive as one PR; majors stay separate for individual review.
+      dev-dependencies:
+        dependency-type: development
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 7
+    groups:
+      github-actions:
+        patterns: ['*']
