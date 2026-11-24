@@ -21,20 +21,22 @@ export function tagSuggested(root: ParentNode): void {
   }
 }
 
-/** Starts tagging; returns a stop function that disconnects the observer. */
+/**
+ * Starts tagging; returns a stop function that disconnects the observer, cancels a scan still
+ * waiting for its animation frame, and removes the tags. Nothing runs after stop returns.
+ */
 export function startSuggestedTagger(): () => void {
-  let scheduled = false;
+  let frame = 0; // pending requestAnimationFrame id; 0 when no scan is scheduled (ids are > 0)
   const scan = (): void => {
-    scheduled = false;
+    frame = 0;
     tagSuggested(document);
   };
   // One rescan per frame is cheap: about 1 ms for 48 feed articles (live check 2026-11-21).
   // ponytail: rescans every article; track unchanged articles if feeds grow into the hundreds.
   // Attribute writes do not retrigger the observer: it watches childList/characterData only.
   const observer = new MutationObserver(() => {
-    if (scheduled) return;
-    scheduled = true;
-    requestAnimationFrame(scan);
+    if (frame) return;
+    frame = requestAnimationFrame(scan);
   });
   observer.observe(document.documentElement, {
     childList: true,
@@ -44,6 +46,10 @@ export function startSuggestedTagger(): () => void {
   scan();
   return () => {
     observer.disconnect();
+    // A scan already scheduled would otherwise re-tag the feed after the toggle went off or the
+    // user left the home route.
+    cancelAnimationFrame(frame);
+    frame = 0;
     for (const article of document.querySelectorAll(`article[${SUGGESTED_ATTR}]`)) {
       article.removeAttribute(SUGGESTED_ATTR);
     }
